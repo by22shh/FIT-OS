@@ -12,6 +12,10 @@
 #include <sys/resource.h>
 
 main(int argc, char *argv[], char * envp[]) {
+    if (argc == 1) {
+        printf("No options\n");
+        exit(0);
+    }
         /* valid short options */
     const char short_options[] = "ispucdv";
 
@@ -40,20 +44,19 @@ main(int argc, char *argv[], char * envp[]) {
         {"VLC_TIME", required_argument, NULL, 0},
         {NULL,0,NULL,0}
     };
-
+             
     int result;
     int option_index;
-
+        
     struct rlimit rlim;
-
+    
     char buffer[1024];
-
+    
     int i;
-
+    
     char *env_name, *env_value;
 
     long value;
-
     while ((result = getopt_long(argc, argv, short_options, long_options, &option_index)) != -1) {
         switch (result) {
                 case 'i':
@@ -90,7 +93,7 @@ main(int argc, char *argv[], char * envp[]) {
                                 value = atol(optarg);
                                 if (value == 0) printf("Wrong value\n");
                                 else ulimit(UL_SETFSIZE, atol(optarg));
-                } else if (strcmp("Csize", long_options[option_index].name) == 0) {
+                        } else if (strcmp("Csize", long_options[option_index].name) == 0) {
                                 value = atol(optarg);
                                 if (value == 0) printf("Wrong value\n");
                                 else {
@@ -98,101 +101,51 @@ main(int argc, char *argv[], char * envp[]) {
                                         rlim.rlim_max = atol(optarg);
                                         setrlimit(RLIMIT_CORE, &rlim);
                                 }
-                } else if (strcmp("Vname", long_options[option_index].name) == 0) {
-                                printf("%s\n",optarg );
-                } else if(strcmp("VTERM", long_options[option_index].name ) == 0) {
-                	                        break;
-                case 'd':
-                        getcwd(buffer, 1024);
-                        printf("Current working directory\t=  %s\n", buffer);
+                        } if(strcmp("VTERM", long_options[option_index].name ) == 0) {
+                                setenv("TERM", optarg, 1);
+                        } else if (strcmp("VSHELL", long_options[option_index].name) == 0) {
+                                setenv("SHELL", optarg, 1);
+                        } else if (strcmp("VSSH_CLIENT", long_options[option_index].name) == 0) {
+                                setenv("SSH_CLIENT", optarg, 1);
+                        } else if (strcmp("VLC_NUMERIC", long_options[option_index].name) == 0) {
+                                setenv("LC_NUMERIC", optarg, 1);
+                        } else if (strcmp("VSSH_TTY", long_options[option_index].name) == 0) {
+                        		setenv("SSH_TTY", optarg, 1);
+                        } else if (strcmp("VUSER", long_options[option_index].name) == 0) {
+                                setenv("USER", optarg, 1);
+                        } else if (strcmp("VMAIL", long_options[option_index].name) == 0) {
+                                setenv("MAIL", optarg, 1);
+                        } else if (strcmp("VPATH", long_options[option_index].name) == 0) {
+                                setenv("PATH", optarg, 1);
+                        } else if (strcmp("VLC_MESSAGES", long_options[option_index].name) == 0) {
+                                setenv("LC_MESSAGES", optarg, 1);
+                        } else if (strcmp("VLC_COLLATE", long_options[option_index].name) == 0) {
+                                setenv("LC_COLLATE", optarg, 1);
+                        } else if (strcmp("VPWD", long_options[option_index].name) == 0) {
+                                setenv("PWD", optarg, 1);
+                        } else if (strcmp("VLANG", long_options[option_index].name) == 0) {
+                                setenv("LANG", optarg, 1);
+                        } else if (strcmp("VTZ", long_options[option_index].name) == 0) {
+                                setenv("TZ", optarg, 1);
+                        } else if (strcmp("VSHLVL", long_options[option_index].name) == 0) {
+                                setenv("SHLVL", optarg, 1);
+                        } else if (strcmp("VHOME", long_options[option_index].name) == 0) {
+                                setenv("HOME", optarg, 1);
+                        } else if (strcmp("VLOGNAME", long_options[option_index].name) == 0) {
+                                setenv("LOGNAME", optarg, 1);
+                        } else if (strcmp("VSSH_CONNECTION", long_options[option_index].name) == 0) {
+                                setenv("SSH_CONNECTION", optarg, 1);
+                        } else if (strcmp("VLC_CTYPE", long_options[option_index].name) == 0) {
+                                setenv("LC_CTYPE", optarg, 1);
+                        } else if (strcmp("VLC_TIME", long_options[option_index].name) == 0) {
+                                setenv("LC_TIME", optarg, 1);
+                        }
                         break;
-                case 'v':
-                        for (i = 0; envp[i] != NULL; i++)
-                                printf("\n%s", envp[i]);
-                        break;
-                case 0:
-                        if(strcmp("Unew_ulimit", long_options[option_index].name ) == 0) {
-                                value = atol(optarg);
-                                if (value == 0) printf("Wrong value\n");
-                                else ulimit(UL_SETFSIZE, atol(optarg));
-                } else if (strcmp("Csize", long_options[option_index].name) == 0) {
-                                value = atol(optarg);
-                                if (value == 0) printf("Wrong value\n");
-                                else {
-                                        rlim.rlim_cur = atol(optarg);
-                                        rlim.rlim_max = atol(optarg);
-                                        setrlimit(RLIMIT_CORE, &rlim);
-                                }
-                } else if (strcmp("Vname", long_options[option_index].name) == 0) {
-                                printf("%s\n",optarg );
-                } else if(strcmp("VTERM", long_options[option_index].name ) == 0) {
-                        setenv("TERM", optarg, 1);
-                } else if (strcmp("VSHELL", long_options[option_index].name) == 0) {
-                        setenv("SHELL", optarg, 1);
-                } else if (strcmp("VSSH_CLIENT", long_options[option_index].name) == 0) {
-                        setenv("SSH_CLIENT", optarg, 1);
-                } else if (strcmp("VLC_NUMERIC", long_options[option_index].name) == 0) {
-                        setenv("LC_NUMERIC", optarg, 1);
-                } else if (strcmp("VSSH_TTY", long_options[option_index].name) == 0) {
-                        setenv("SSH_TTY", optarg, 1);
-                } else if (strcmp("VUSER", long_options[option_index].name) == 0) {
-                        setenv("USER", optarg, 1);
-                } else if (strcmp("VMAIL", long_options[option_index].name) == 0) {
-                        setenv("MAIL", optarg, 1);
-                } else if (strcmp("VPATH", long_options[option_index].name) == 0) {
-                        setenv("PATH", optarg, 1);
-                } else if (strcmp("VLC_MESSAGES", long_options[option_index].name) == 0) {
-                        setenv("LC_MESSAGES", optarg, 1);
-                } else if (strcmp("VLC_COLLATE", long_options[option_index].name) == 0) {
-                        setenv("LC_COLLATE", optarg, 1);
-                } else if (strcmp("VPWD", long_options[option_index].name) == 0) {
-                        setenv("PWD", optarg, 1);
-                } else if (strcmp("VLANG", long_options[option_index].name) == 0) {
-                        setenv("LANG", optarg, 1);
-                } else if (strcmp("VTZ", long_options[option_index].name) == 0) {
-                        setenv("TZ", optarg, 1);
-                } else if (strcmp("VSHLVL", long_options[option_index].name) == 0) {
-                } else if (strcmp("VSHELL", long_options[option_index].name) == 0) {
-                        setenv("SHELL", optarg, 1);
-                } else if (strcmp("VSSH_CLIENT", long_options[option_index].name) == 0) {
-                        setenv("SSH_CLIENT", optarg, 1);
-                } else if (strcmp("VLC_NUMERIC", long_options[option_index].name) == 0) {
-                        setenv("LC_NUMERIC", optarg, 1);
-                } else if (strcmp("VSSH_TTY", long_options[option_index].name) == 0) {
-                        setenv("SSH_TTY", optarg, 1);
-                } else if (strcmp("VUSER", long_options[option_index].name) == 0) {
-                        setenv("USER", optarg, 1);
-                } else if (strcmp("VMAIL", long_options[option_index].name) == 0) {
-                        setenv("MAIL", optarg, 1);
-                } else if (strcmp("VPATH", long_options[option_index].name) == 0) {
-                        setenv("PATH", optarg, 1);
-                } else if (strcmp("VLC_MESSAGES", long_options[option_index].name) == 0) {
-                        setenv("LC_MESSAGES", optarg, 1);
-                } else if (strcmp("VLC_COLLATE", long_options[option_index].name) == 0) {
-                        setenv("LC_COLLATE", optarg, 1);
-                } else if (strcmp("VPWD", long_options[option_index].name) == 0) {
-                        setenv("PWD", optarg, 1);
-                } else if (strcmp("VLANG", long_options[option_index].name) == 0) {
-                        setenv("LANG", optarg, 1);
-                } else if (strcmp("VTZ", long_options[option_index].name) == 0) {
-                        setenv("TZ", optarg, 1);
-                } else if (strcmp("VSHLVL", long_options[option_index].name) == 0) {
-                        setenv("SHLVL", optarg, 1);
-                } else if (strcmp("VHOME", long_options[option_index].name) == 0) {
-                        setenv("HOME", optarg, 1);
-                } else if (strcmp("VLOGNAME", long_options[option_index].name) == 0) {
-                        setenv("LOGNAME", optarg, 1);
-                } else if (strcmp("VSSH_CONNECTION", long_options[option_index].name) == 0) {
-                        setenv("SSH_CONNECTION", optarg, 1);
-                } else if (strcmp("VLC_CTYPE", long_options[option_index].name) == 0) {
-                        setenv("LC_CTYPE", optarg, 1);
-                } else if (strcmp("VLC_TIME", long_options[option_index].name) == 0) {
-                        setenv("LC_TIME", optarg, 1);
-                }
-                break;
+
         }
     }
 }
+
 
 /*
 argc - счетчик количества параметров командой строки argc.
@@ -243,4 +196,8 @@ struct option {
 
 /*
 Процесс, который запустил процесс называется родительским 
+*/
+
+/*
+Переменные окружения — именованные переменные, содержащие текстовую информацию, которую могут использовать запускаемые программы. 
 */
